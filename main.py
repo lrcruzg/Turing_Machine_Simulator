@@ -28,7 +28,7 @@ class App:
 								state_symbol_strvar=self.state_symbol_strvar, 
 				 				steps_strvar=self.steps_strvar)
 
-		file_name = 'succesor_function.txt'
+		file_name = 'successor_function.txt'
 		self.tm.load_function(file_name)
 		self.tm.load_input('111')
 				
