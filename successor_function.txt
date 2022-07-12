@@ -1,0 +1,8 @@
+
+initial_state: q_1
+final_state: q_0
+
+q_1, 1 - q_1, 1, r
+q_1, B - q_2, 1, l
+q_2, 1 - q_2, 1, l
+q_2, B - q_0, B, r
