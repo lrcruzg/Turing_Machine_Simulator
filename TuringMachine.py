@@ -63,7 +63,7 @@ class TuringMachine:
 	def update_strvar(self):
 		self.steps_strvar.set(f'Steps: {self.steps_counter}')
 		self.state_symbol_strvar.set(
-			f'(State, Symbol): ({self.current_state}, {self.tape[self.head_position]})'
+			f'({self.current_state}, {self.tape[self.head_position]})'
 		)
 
 	def load_input(self, tape_input: str = '') -> None:

@@ -16,14 +16,12 @@ class App:
 								height=self.canvas_height)
 		self.canvas.configure(bg='white')
 
-		self.canvas.grid(row=0, column=0, columnspan=3)
-
 		self.menubar = tk.Menu(self.root)
 		self.filemenu = tk.Menu(self.menubar, tearoff=0)
 		self.filemenu.add_command(label='Open...', 
 								  command=self.select_file)
 
-		self.menubar.add_cascade(label="File", menu=self.filemenu)
+		self.menubar.add_cascade(label='File', menu=self.filemenu)
 		self.root.config(menu=self.menubar)
 
 		self.input_strvar = tk.StringVar(value='')
@@ -38,7 +36,7 @@ class App:
 								state_symbol_strvar=self.state_symbol_strvar, 
 				 				steps_strvar=self.steps_strvar)
 
-		file_name = 'successor_function.txt'
+		file_name = './transition_functions/successor_function.txt'
 		self.tm.load_function(file_name)
 		self.tm.load_input('111')
 				
@@ -74,14 +72,15 @@ class App:
 		self.text_box.insert('end', self.tm.function_txt)
 		self.text_box['state'] = 'disabled'
 
+		self.canvas.grid(row=0, column=0, columnspan=4)
 		self.state_text.grid(row=1, column=0)
-		self.steps_text.grid(row=1, column=2)
-		self.step_btn.grid(row=2, column=1)
-		self.run_btn.grid(row=2, column=2)
-		self.reset_btn.grid(row=2, column=0)
-		self.input_entry.grid(row=3, column=0, sticky=('E'))
-		self.load_btn.grid(row=3, column=1, sticky=('W'))
-		self.text_box.grid(row=4, column=0, columnspan=3)
+		self.steps_text.grid(row=1, column=1)
+		self.step_btn.grid(row=2, column=0)
+		self.run_btn.grid(row=2, column=1)
+		self.reset_btn.grid(row=4, column=0)
+		self.input_entry.grid(row=3, column=0, sticky='E')
+		self.load_btn.grid(row=3, column=1, sticky='W')
+		self.text_box.grid(row=1, column=2, columnspan=2, rowspan=4)
 
 	def select_file(self):
 		filetypes = (
@@ -91,11 +90,11 @@ class App:
 
 		file_name = fd.askopenfilename(
 			title='Open the function file.',
-			initialdir='./',
+			initialdir='./transition_functions/',
 			filetypes=filetypes
 		)
 
-		if file_name != ():  # a file is selected
+		if file_name != () and file_name != '':  # a file is selected
 			self.tm.reset()
 			self.tm.load_function(file_name)
 			self.text_box['state'] = 'normal'
