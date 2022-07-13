@@ -1,12 +1,16 @@
 from TuringMachine import TuringMachine
 import tkinter as tk
+from tkinter import filedialog as fd
 
 
 class App:
 	def __init__(self, root):
 		self.root = root
+		
+		self.cell_size = 34
 		self.canvas_width = 800
 		self.canvas_height = 100
+		
 		self.canvas = tk.Canvas(self.root, 
 								width=self.canvas_width, 
 								height=self.canvas_height)
@@ -14,7 +18,13 @@ class App:
 
 		self.canvas.grid(row=0, column=0, columnspan=3)
 
-		self.cell_size = 34
+		self.menubar = tk.Menu(self.root)
+		self.filemenu = tk.Menu(self.menubar, tearoff=0)
+		self.filemenu.add_command(label='Open...', 
+								  command=self.select_file)
+
+		self.menubar.add_cascade(label="File", menu=self.filemenu)
+		self.root.config(menu=self.menubar)
 
 		self.input_strvar = tk.StringVar(value='')
 		self.steps_strvar = tk.StringVar(value='')
@@ -34,42 +44,64 @@ class App:
 				
 		self.state_text = tk.Label(root, 
 								   textvariable=self.state_symbol_strvar
-								   ).grid(row=1, column=0)
+								   )
 
 		self.steps_text = tk.Label(root, 
-								   textvariable=self.steps_strvar
-								   ).grid(row=1, column=2)
+								   textvariable=self.steps_strvar)
 
 		self.step_btn = tk.Button(root, 
 								  text='Step',
-								  command=self.tm.step
-								  ).grid(row=2, column=1)
+								  command=self.tm.step)
 
 		self.run_btn = tk.Button(root, 
 								 text='Run', 
-								 command=self.tm.run_pause
-								).grid(row=2, column=2)
+								 command=self.tm.run_pause)
 
 		self.reset_btn = tk.Button(root, 
 								   text='Reset', 
-								   command=self.tm.reset
-								   ).grid(row=2, column=0)
+								   command=self.tm.reset)
 
 		self.input_entry = tk.Entry(root,
-									textvariable=self.input_strvar
-									).grid(row=3, column=0, sticky=('E'))
+									textvariable=self.input_strvar)
 
 		self.load_btn = tk.Button(root, 
 								  text='Load', 
-								  command=lambda : self.tm.load_input(self.input_strvar.get())
-								  ).grid(row=3, column=1, sticky=('W'))
+								  command=lambda : self.tm.load_input(self.input_strvar.get()))
 
 		self.text_box = tk.Text(self.root, 
 								state='normal')
 		
-		self.text_box.grid(row=4, column=0, columnspan=3)
-		
 		self.text_box.insert('end', self.tm.function_txt)
+		self.text_box['state'] = 'disabled'
+
+		self.state_text.grid(row=1, column=0)
+		self.steps_text.grid(row=1, column=2)
+		self.step_btn.grid(row=2, column=1)
+		self.run_btn.grid(row=2, column=2)
+		self.reset_btn.grid(row=2, column=0)
+		self.input_entry.grid(row=3, column=0, sticky=('E'))
+		self.load_btn.grid(row=3, column=1, sticky=('W'))
+		self.text_box.grid(row=4, column=0, columnspan=3)
+
+	def select_file(self):
+		filetypes = (
+			('Text files', '*.txt'),
+			('All files', '*.*')
+		)
+
+		file_name = fd.askopenfilename(
+			title='Open the function file.',
+			initialdir='./',
+			filetypes=filetypes
+		)
+
+		if file_name != ():  # a file is selected
+			self.tm.reset()
+			self.tm.load_function(file_name)
+			self.text_box['state'] = 'normal'
+			self.text_box.delete('1.0', 'end')
+			self.text_box.insert('end', self.tm.function_txt)
+			self.text_box['state'] = 'disabled'
 
 
 def main():
