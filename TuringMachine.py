@@ -186,13 +186,12 @@ class TuringMachine:
 		self.update_strvar()
 
 		if move == 'l':  # move the head to the left
-			self.move(1)  # move the tape to the right
-		elif move == 'r':
-			self.move(-1)  # move the tape to the left
+			self.move(1)
+		elif move == 'r':  # move the head to the right
+			self.move(-1)
 		
 		self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#d2ecf9')
 
-	# evaluará si debe de pausar o no la máquina
 	def run_pause(self) -> None:
 		"""Run or pause the execution of the machine. """
 		if not self.running:
