@@ -1,8 +1,18 @@
+# successor function
+# given a tape with (contiguous) '1', write one '1' 
+# at the end of those and ends.
 
 initial_state: q_1
 final_state: q_0
 
+# traverse the 1's
 q_1, 1 - q_1, 1, r
+
+# once you find the first B, write 1
 q_1, B - q_2, 1, l
+
+# traverse the 1's (to the left)
 q_2, 1 - q_2, 1, l
+
+# end
 q_2, B - q_0, B, r
