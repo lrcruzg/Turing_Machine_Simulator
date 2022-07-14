@@ -86,12 +86,10 @@ class TuringMachine:
 		"""Reset the machine. The tape (head) moves to its initial position, the current
 		state is reset to the initial state and the steps counter is reset to 0. """
 		self.running = False  # stop the machine if its running
-		# self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='white')
 		self.tape.reset()
 		self.current_state = self.initial_state
 		self.steps_counter = 0
 		self.head_position = 1
-		# self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#d2ecf9')
 		self.update_strvar()
 
 	def load_function(self, file_name) -> None:
