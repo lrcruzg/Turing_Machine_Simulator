@@ -81,8 +81,8 @@ class App:
 
 		self.canvas.grid(row=0, column=0, columnspan=3)
 		self.btns_frame.grid(row=1, column=0, rowspan=4, columnspan=2, sticky='nsew', pady=10, padx=10)
-		self.state_symb_text.grid(row=1, column=0, pady=5)
-		self.steps_text.grid(row=1, column=1)
+		self.state_symb_text.grid(row=1, column=0, pady=9)
+		self.steps_text.grid(row=1, column=1, pady=9)
 		self.step_btn.grid(row=2, column=0)
 		self.run_btn.grid(row=2, column=1)
 		self.reset_btn.grid(row=4, column=0)
@@ -96,6 +96,7 @@ class App:
 		self.root.bind('<Escape>', lambda event: self.tm.reset())
 
 	def select_file(self):
+		"""Function to select a transition function file (txt). """
 		filetypes = (
 			('Text files', '*.txt'),
 			('All files', '*.*')

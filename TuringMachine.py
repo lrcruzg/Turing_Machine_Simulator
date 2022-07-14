@@ -86,12 +86,12 @@ class TuringMachine:
 		"""Reset the machine. The tape (head) moves to its initial position, the current
 		state is reset to the initial state and the steps counter is reset to 0. """
 		self.running = False  # stop the machine if its running
-		self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='white')
+		# self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='white')
 		self.tape.reset()
 		self.current_state = self.initial_state
 		self.steps_counter = 0
 		self.head_position = 1
-		self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#d2ecf9')
+		# self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#d2ecf9')
 		self.update_strvar()
 
 	def load_function(self, file_name) -> None:
@@ -161,9 +161,6 @@ class TuringMachine:
 			print('End State')
 			return
 
-		# reset (to white) the color of the current cell
-		self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='white')
-
 		try:
 			current_symbol = self.tape[self.head_position]
 		except IndexError:
@@ -189,8 +186,6 @@ class TuringMachine:
 			self.move(1)
 		elif move == 'r':  # move the head to the right
 			self.move(-1)
-		
-		self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#d2ecf9')
 
 	def run_pause(self) -> None:
 		"""Run or pause the execution of the machine. """
