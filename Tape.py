@@ -41,7 +41,8 @@ class Tape:
 		initial_position_x = self.canvas_width // 2 - 3 * (self.cell_size // 2)
 		initial_position_y = self.canvas_height // 2 - self.cell_size // 2
 		for i in range(self.n_cells):
-			self.tape[i].coords(initial_position_x + self.cell_size * i, initial_position_y)
+			self.tape[i].move_to(initial_position_x + self.cell_size * i, 
+								 initial_position_y)
 			self[i] = 'B'
 
 	def move(self, side: int):
