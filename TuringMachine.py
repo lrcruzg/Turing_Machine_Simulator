@@ -9,7 +9,8 @@ class TuringMachine:
 				 cell_size: int,
 				 canvas_width: int,
 				 canvas_height: int,
-				 state_symbol_strvar, 
+				 state_strvar, 
+				 symbol_strvar, 
 				 steps_strvar):
 		self.root = root
 		self.canvas = canvas
@@ -29,7 +30,8 @@ class TuringMachine:
 		self.current_state = self.initial_state
 		self.steps_counter = 0
 
-		self.state_symbol_strvar = state_symbol_strvar
+		self.state_strvar = state_strvar
+		self.symbol_strvar = symbol_strvar
 		self.steps_strvar = steps_strvar
 
 		self.update_strvar()
@@ -61,13 +63,20 @@ class TuringMachine:
 		return self.canvas.create_polygon(*head_points, fill=head_color)
 
 	def update_strvar(self):
+		"""Update the UI labels text with the current state of the machine. """
 		self.steps_strvar.set(f'Steps: {self.steps_counter}')
-		self.state_symbol_strvar.set(
-			f'({self.current_state}, {self.tape[self.head_position]})'
+		self.state_strvar.set(
+			f'State: {self.current_state}'
+		)
+		self.symbol_strvar.set(
+			f'Symbol: {self.tape[self.head_position]}'
 		)
 
-	def load_input(self, tape_input: str = '') -> None:
+	def load_input(self, tape_input: str) -> None:
 		"""Loads every char of tape_input as a symbol of a Cell on the machine tape. """
+		if not len(tape_input):
+			return
+		
 		self.reset()
 		for i in range(len(tape_input)):
 			self.tape[self.head_position + i] = tape_input[i]
@@ -86,7 +95,9 @@ class TuringMachine:
 		"""Reset the machine. The tape (head) moves to its initial position, the current
 		state is reset to the initial state and the steps counter is reset to 0. """
 		self.running = False  # stop the machine if its running
-		self.tape.reset()
+		self.tape.reset()  # reset the tape, set all symbols to B an move to it original position
+
+		# reset all the parameters of the machine to it's original values
 		self.current_state = self.initial_state
 		self.steps_counter = 0
 		self.head_position = 1
@@ -102,7 +113,7 @@ class TuringMachine:
 		# parse the file
 		try:
 			for n, line in enumerate(lines):
-				if not line.startswith('#'):
+				if not line.startswith('#'):  # if its not a comment
 					line = line.replace('\n', '')
 					if line:
 						if line.startswith('initial_state'):
@@ -140,7 +151,7 @@ class TuringMachine:
 		self.generate_func_txt(file_name)
 
 	def generate_func_txt(self, file_name) -> None:
-		"""Generates the text to be displayed in the text box. """
+		"""Generates the text to be displayed in the UI text box. """
 		txt = ''
 		with open(file_name, 'r') as f:
 			for line in f:
@@ -194,7 +205,7 @@ class TuringMachine:
 			self.running = False
 
 	def run(self) -> None:
-		"""Run the machine until it reaches the final state or is paused. """
+		"""Run the machine until it reaches the final state or it's paused. """
 		if self.current_state != self.final_state and self.running:
 			self.step()
-			self.root.after(500, self.run)
+			self.root.after(550, self.run)
