@@ -1,36 +1,39 @@
+#	Copy function
+
+# Input: Tape with some (contiguous) '1's, 
+# (The function) leaves the tape with the same '1's at the end 
+# leaves a blanc ('B'), and then writes the same amount of '1's
 
 initial_state: q_1
 final_state: q_0
 
-# transforma el input en i
+# The '1's are transformed into to a 'i'
 q_1, 1 - q_1, i, r
 
-# acaba de transformar en i
+# records (using q_2) that every (initial) '1' is now an 'i'
 q_1, B - q_2, B, d
 
-# recorre los 1 copiados
+# traverse the copied '1's
 q_2, 1 - q_2, 1, l
 
-# al encontrar el primer espacio, cambia q_4 (solo hay un B)
+# records the first space
 q_2, B - q_3, B, l 
 
-# remplaza al primer i que ve por 1
+# replace the first 'i' for a '1'
 q_3, i - q_4, 1, r
 
-# ignora a los 1 que ya fueron copiados
+# ignore the copied '1's (the original '1's)
 q_3, 1 - q_3, 1, l
 
-# si ya no hay i, ya acabó de copiar, termina
+# if there aren't '1's to copy, end
 q_3, B - q_0, B, r
 
-# ignora los 1 ya copiados
+# ignore the (new) copied '1's
 q_4, 1 - q_4, 1, r
 
-# cuenta el espacio entre los a copiar y copiados
+# records the blanc space between the original and new '1's
 q_4, B - q_5, B, r
 
-# salta a los 1 copiados
 q_5, 1 - q_5, 1, r
 
-# en el primer blanco, copia al 1
 q_5, B - q_2, 1, l
