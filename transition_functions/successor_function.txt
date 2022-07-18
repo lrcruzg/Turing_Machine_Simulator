@@ -4,6 +4,10 @@
 # (The function) writes one '1' at the end 
 # of those '1's and ends (reaches the final state).
 
+# function syntax
+# state, symbol - state, symbol, move
+# move: l -> left, r -> right, d -> no move
+
 initial_state: q_1
 final_state: q_0
 
