@@ -50,6 +50,9 @@ class TuringMachine:
         self.function_txt = ''
         self.moves_counter = 0
         self.running = False
+        
+        # highlight the initial cell
+        self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#e9f6fc')
 
     def create_head(self):
         head_color = '#1b8ec2'
