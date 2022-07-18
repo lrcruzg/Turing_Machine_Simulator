@@ -36,7 +36,7 @@ class App:
                                 canvas_height=self.canvas_height, 
                                 state_strvar=self.state_strvar,
                                 symbol_strvar=self.symbol_strvar, 
-                                 steps_strvar=self.steps_strvar)
+                                steps_strvar=self.steps_strvar)
 
         self.file_name = tk.StringVar(value='./transition_functions/successor_function.txt')
         self.tm.load_function(self.file_name.get())
@@ -57,10 +57,10 @@ class App:
                                     height=2)
 
         self.symbol_label = tk.Label(self.btns_frame, 
-                                      textvariable=self.symbol_strvar, 
-                                      font=('Helvetica', 12, 'bold'), 
-                                      width=17, 
-                                      height=2)
+                                     textvariable=self.symbol_strvar, 
+                                     font=('Helvetica', 12, 'bold'), 
+                                     width=17, 
+                                     height=2)
 
         self.steps_label = tk.Label(self.root, 
                                     textvariable=self.steps_strvar, 
@@ -139,7 +139,7 @@ class App:
             self.text_box.delete('1.0', 'end')
             self.text_box.insert('end', self.tm.function_txt)
             self.text_box['state'] = 'disabled'
-            self.file_name.set(new_file_name)
+            self.file_name.set(new_file_name.split('/')[-1]) # display only the file name
 
 
 def main():

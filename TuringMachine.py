@@ -18,12 +18,17 @@ class TuringMachine:
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
 
-        self.tape = Tape(self.cell_size, 
+        self.num_cells = 60
+        self.initial_head_pos = 30
+
+        self.tape = Tape(self.num_cells,
+                         self.cell_size, 
+                         self.initial_head_pos, # center_cell
                          self.canvas, 
                          self.canvas_width, 
                          self.canvas_height)
 
-        self.head_position = 1
+        self.head_position = self.initial_head_pos
         self.initial_state = None
         self.final_state = None
 
@@ -38,7 +43,7 @@ class TuringMachine:
 
         self.head_movement = {'r': 1, 'l': -1, 'd': 0}
 
-        self.function = {}  # (state, symbol) -> (state, symbol, move)
+        self.function = {}
 
         self.head = self.create_head()
 
@@ -46,7 +51,7 @@ class TuringMachine:
         self.moves_counter = 0
         self.running = False
 
-    def create_head(self) -> None:
+    def create_head(self):
         head_color = '#1b8ec2'
         head_points = [
             self.canvas_width // 2 + 8, 
@@ -62,7 +67,7 @@ class TuringMachine:
         ]
         return self.canvas.create_polygon(*head_points, fill=head_color)
 
-    def update_strvar(self):
+    def update_strvar(self) -> None:
         """Update the UI labels text with the current state of the machine. """
         self.steps_strvar.set(f'Steps: {self.steps_counter}')
         self.state_strvar.set(
@@ -100,7 +105,7 @@ class TuringMachine:
         # reset all the parameters of the machine to it's original values
         self.current_state = self.initial_state
         self.steps_counter = 0
-        self.head_position = 1
+        self.head_position = self.initial_head_pos
         self.update_strvar()
 
     def load_function(self, file_name) -> None:
