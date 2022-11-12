@@ -5,13 +5,13 @@ Turing Machine Simulator written in Python using Tkinter.
 
 ## Usage
 
-To run the program, on the terminal execute: 
+To run the program, on the terminal, move to ```src/``` and execute: 
 
 ```
 python3 main.py
 ```
 
-## Images
+## Demo
 
 
-![Program screenshot](./images/program_ss.png)
+![Program demo](./images/TM_running.webm)
