@@ -3,113 +3,65 @@ import re
 
 
 class TuringMachine:
-    def __init__(self,
-                 root,
-                 canvas,
-                 cell_size: int,
-                 canvas_width: int,
-                 canvas_height: int,
-                 state_strvar, 
-                 symbol_strvar, 
-                 steps_strvar):
-        self.root = root
-        self.canvas = canvas
-        self.cell_size = cell_size
-        self.canvas_width = canvas_width
-        self.canvas_height = canvas_height
+    def __init__(
+            self, 
+            function: dict = None, 
+            initial_state: str = None, 
+            final_state: str = None):
+        self.function = function
 
         self.num_cells = 60
-        self.initial_head_pos = 30
+        self.initial_head_position = 30
 
-        self.tape = Tape(self.num_cells,
-                         self.cell_size, 
-                         self.initial_head_pos, # center_cell
-                         self.canvas, 
-                         self.canvas_width, 
-                         self.canvas_height)
-
-        self.head_position = self.initial_head_pos
-        self.initial_state = None
-        self.final_state = None
+        self.head_position = self.initial_head_position
+        self.initial_state = initial_state
+        self.final_state = final_state
 
         self.current_state = self.initial_state
         self.steps_counter = 0
-
-        self.state_strvar = state_strvar
-        self.symbol_strvar = symbol_strvar
-        self.steps_strvar = steps_strvar
-
-        self.update_strvar()
 
         self.head_movement = {'r': 1, 'l': -1, 'd': 0}
+        self.tape = Tape(self.num_cells)
 
-        self.function = {}
+        # (prev. symbol, prev. state, curr. symbol, curr. state)
+        self.history = []
 
-        self.head = self.create_head()
+    def step(self) -> bool:
+        """Runs the machine one step.
+        Returns True if the machine could run one step, otherwise returns False.
+        """
+        if not self.function:
+            return False
 
-        self.function_txt = ''
-        self.moves_counter = 0
-        self.running = False
-        
-        # highlight the initial cell
-        self.canvas.itemconfig(self.tape.tape[self.head_position].rect, fill='#e9f6fc')
+        if self.current_state == self.final_state:
+            return False
 
-    def create_head(self):
-        head_color = '#1b8ec2'
-        head_points = [
-            self.canvas_width // 2 + 8, 
-            self.canvas_height // 2 + self.cell_size // 2 + 12, 
-            self.canvas_width // 2, 
-            self.canvas_height // 2 + self.cell_size // 2 + 4,
-            self.canvas_width // 2 - 8, 
-            self.canvas_height // 2 + self.cell_size // 2 + 12,
-            self.canvas_width // 2 - 8, 
-            self.canvas_height // 2 + self.cell_size // 2 + 17,
-            self.canvas_width // 2 + 8, 
-            self.canvas_height // 2 + self.cell_size // 2 + 17
-        ]
-        return self.canvas.create_polygon(*head_points, fill=head_color)
+        try:
+            current_symbol = self.tape[self.head_position]
+        except IndexError:
+            print(f'Head out of the tape. Head position = {self.head_position}')
+            return False
 
-    def update_strvar(self) -> None:
-        """Update the UI labels text with the current state of the machine. """
-        self.steps_strvar.set(f'Steps: {self.steps_counter}')
-        self.state_strvar.set(
-            f'State: {self.current_state}'
-        )
-        self.symbol_strvar.set(
-            f'Symbol: {self.tape[self.head_position]}'
+        try:
+            new_state, new_symbol, move = self.function[(self.current_state, current_symbol)]
+        except KeyError:
+            print(
+                f'Instruction (state = {repr(self.current_state)}, '
+                f'symbol = {repr(self.tape[self.head_position])}) '
+                f'is not defined'
+            )
+            return False
+
+        self.history.append(
+            (current_symbol, self.current_state, new_symbol, new_state, move)
         )
 
-    def load_input(self, tape_input: str) -> None:
-        """Loads every char of tape_input as a symbol of a Cell on the machine tape. """
-        if not len(tape_input):
-            return
-        
-        self.reset()
-        for i in range(len(tape_input)):
-            self.tape[self.head_position + i] = tape_input[i]
+        self.current_state = new_state
+        self.tape[self.head_position] = new_symbol
+        self.head_position += self.head_movement[move]
+        self.steps_counter += 1
 
-    def move(self, side) -> None:
-        """Move the machine's head to the side given by its argument.
-        side = 1, move the head to the left. side = -1, move the head to the  right. """
-        if self.moves_counter != self.cell_size // 2:
-            self.moves_counter += 1
-            self.tape.move(side * 2)
-            self.root.after(18, lambda : self.move(side))
-        else:
-            self.moves_counter = 0
-
-    def reset(self) -> None:
-        """Reset the machine. The tape (head) moves to its initial position, the current
-        state is reset to the initial state and the steps counter is reset to 0. """
-        self.running = False  # stop the machine if its running
-        self.tape.reset()  # reset the tape, set all symbols to B an move to it original position
-
-        # reset all the parameters of the machine to it's original values
-        self.current_state = self.initial_state
-        self.steps_counter = 0
-        self.head_position = self.initial_head_pos
-        self.update_strvar()
+        return True
 
     def load_function(self, file_name) -> None:
         """Loads the transition function from a (txt) file. """
@@ -156,64 +108,22 @@ class TuringMachine:
 
         self.function = new_function
 
-        self.generate_func_txt(file_name)
 
-    def generate_func_txt(self, file_name) -> None:
-        """Generates the text to be displayed in the UI text box. """
-        txt = ''
-        with open(file_name, 'r') as f:
-            for line in f:
-                txt += line
+    def reset(self):
+        """Reset all the parameters of the machine to it's original values. """
+        self.tape.reset()  # reset the tape
 
-        self.function_txt = txt
+        self.current_state = self.initial_state
+        self.steps_counter = 0
+        self.head_position = self.initial_head_position
+        self.history = []
 
-    def step(self) -> None:
-        """Run one step the Turing Machine. """
-
-        # can't make a step if there's an animation running
-        if self.moves_counter != 0:  
-            return 
-
-        if self.current_state == self.final_state:
-            print('End State')
+    def load_input(self, tape_input: str) -> None:
+        """Loads every char of tape_input as a symbol of a Cell on the machine tape. """
+        if not len(tape_input):
             return
+        
+        self.reset()
 
-        try:
-            current_symbol = self.tape[self.head_position]
-        except IndexError:
-            print(f'The head is out of the tape. Head position = {self.head_position}')
-            return
-
-        try:
-            new_state, new_symbol, move = self.function[(self.current_state, current_symbol)]
-        except KeyError:
-            print(f'Instruction (state = {repr(self.current_state)}, '
-                  f'symbol = {repr(self.tape[self.head_position])}) is not '
-                  f'defined in the function')
-            return
-
-        self.current_state = new_state
-        self.tape[self.head_position] = new_symbol
-        self.head_position += self.head_movement[move]
-        self.steps_counter += 1
-
-        self.update_strvar()
-
-        if move == 'l':  # move the head to the left
-            self.move(1)
-        elif move == 'r':  # move the head to the right
-            self.move(-1)
-
-    def run_pause(self) -> None:
-        """Run or pause the execution of the machine. """
-        if not self.running:
-            self.running = True
-            self.run()
-        else:
-            self.running = False
-
-    def run(self) -> None:
-        """Run the machine until it reaches the final state or it's paused. """
-        if self.current_state != self.final_state and self.running:
-            self.step()
-            self.root.after(550, self.run)
+        for i in range(len(tape_input)):
+            self.tape[self.head_position + i] = tape_input[i]
