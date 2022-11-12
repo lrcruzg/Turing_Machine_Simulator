@@ -14,4 +14,4 @@ python3 main.py
 ## Demo
 
 
-![Program demo](./images/TM_running.webm)
+![](./images/tm_running.gif)
