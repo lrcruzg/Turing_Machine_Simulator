@@ -1,4 +1,7 @@
-from Tape import Tape
+import sys
+sys.path.append('../')
+
+from src.Tape import Tape
 import re
 
 
@@ -9,9 +12,7 @@ class TuringMachine:
             initial_state: str = None, 
             final_state: str = None):
         self.function = function
-
-        self.num_cells = 60
-        self.initial_head_position = 30
+        self.tape = Tape(num_cells=64)
 
         self.head_position = self.initial_head_position
         self.initial_state = initial_state
@@ -21,10 +22,22 @@ class TuringMachine:
         self.steps_counter = 0
 
         self.head_movement = {'r': 1, 'l': -1, 'd': 0}
-        self.tape = Tape(self.num_cells)
 
         # (prev. symbol, prev. state, curr. symbol, curr. state)
         self.history = []
+
+
+    @property
+    def num_cells(self) -> int:
+        """Return the size of self.tape. """
+        return self.tape.num_cells
+
+
+    @property
+    def initial_head_position(self) -> int:
+        """Return the size of self.tape. """
+        return self.num_cells // 2
+
 
     def step(self) -> bool:
         """Runs the machine one step.
@@ -63,6 +76,7 @@ class TuringMachine:
 
         return True
 
+
     def load_function(self, file_name) -> None:
         """Loads the transition function from a (txt) file. """
         tokens = []
@@ -70,7 +84,7 @@ class TuringMachine:
         with open(file_name) as f:
             lines = [line.rstrip() for line in f]
 
-        # parse the file
+        # Parse the file
         try:
             for n, line in enumerate(lines):
                 if not line.startswith('#'):  # if its not a comment
@@ -91,7 +105,7 @@ class TuringMachine:
             return
 
         if not self.initial_state or not self.final_state:
-            raise Exception('No initial or final state')
+            print('No initial or final state')
             return
 
         new_function = {}
@@ -118,12 +132,16 @@ class TuringMachine:
         self.head_position = self.initial_head_position
         self.history = []
 
+
     def load_input(self, tape_input: str) -> None:
         """Loads every char of tape_input as a symbol of a Cell on the machine tape. """
         if not len(tape_input):
             return
         
+        if self.num_cells // 2 < len(tape_input):
+            self.tape.resize(len(tape_input))
+
         self.reset()
 
-        for i in range(len(tape_input)):
-            self.tape[self.head_position + i] = tape_input[i]
+        for i, c in enumerate(tape_input):
+            self.tape[self.head_position + i] = c
