@@ -1,5 +1,7 @@
 from TuringMachine import TuringMachine
 from Tape_UI import Tape_UI
+from tkinter import DoubleVar, StringVar
+
 
 class TuringMachine_UI:
     def __init__(
@@ -9,9 +11,10 @@ class TuringMachine_UI:
             machine: TuringMachine, 
             cell_size: int, 
             canvas_dimensions: tuple[int, int], 
-            state_strvar, 
-            symbol_strvar, 
-            steps_strvar):
+            state_strvar: StringVar, 
+            symbol_strvar: StringVar, 
+            steps_strvar: StringVar, 
+            speed_var: DoubleVar):
         self.root = root
         self.canvas = canvas
         self.cell_size = cell_size
@@ -23,13 +26,13 @@ class TuringMachine_UI:
                             self.machine.tape, 
                             canvas, 
                             cell_size, 
-                            self.machine.initial_head_position, # center_cell
                             canvas_dimensions
                         )
 
         self.state_strvar = state_strvar
         self.symbol_strvar = symbol_strvar
         self.steps_strvar = steps_strvar
+        self.speed_var = speed_var
 
         self.update_strvar()
 
@@ -39,7 +42,13 @@ class TuringMachine_UI:
         self.moves_counter = 0
         self.running = False
 
-        # highlight the initial cell
+        self.color_initial_cell()
+
+    def color_initial_cell(self, highlight: bool = True):
+        """(Un)Highlight the initial cell. 
+        Color the initial cell if highlight, otherwise pait it white
+        """
+        color = '#e9f6fc' if highlight else "#ffffff"
         self.canvas.itemconfig(
             self.tape_ui.tape_canvas[self.machine.head_position].rect, 
             fill='#e9f6fc'
@@ -84,12 +93,18 @@ class TuringMachine_UI:
         """Loads every char of tape_input as a symbol of a Cell on the machine tape. """
         if not len(tape_input):
             return
-        
+
         self.reset()
 
+        self.color_initial_cell(highlight=False) # un-highlight white the initial cell
+
         self.machine.load_input(tape_input)
+
         self.update_strvar()
         self.tape_ui.update_tape()
+
+        self.color_initial_cell(highlight=True) # highlight the initial cell
+
 
     def move(self, side) -> None:
         """Move the machine's head to the side given by its argument.
@@ -97,7 +112,7 @@ class TuringMachine_UI:
         if self.moves_counter != self.cell_size // 2:
             self.moves_counter += 1
             self.tape_ui.move(side * 2)
-            self.root.after(18, lambda : self.move(side))
+            self.root.after(int(20 * self.speed_var.get()), lambda : self.move(side))
         else:
             self.moves_counter = 0
 

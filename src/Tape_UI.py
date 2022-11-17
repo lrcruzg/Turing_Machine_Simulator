@@ -7,11 +7,9 @@ class Tape_UI:
             tape: Tape, 
             canvas, 
             cell_size: int, 
-            center_cell: int, 
             canvas_dimensions: tuple[int, int]):
         self.tape = tape
         self.cell_size = cell_size
-        self.center_cell = center_cell
         
         self.canvas = canvas
         self.canvas_dimensions = canvas_dimensions
@@ -19,6 +17,10 @@ class Tape_UI:
         self.tape_canvas = []
 
         self.init_tape_canvas()
+
+    @property
+    def center_cell(self):
+        return self.tape.num_cells // 2
 
     def center_tape(self) -> None:
         """Set the tape to its initial position. 
@@ -40,6 +42,8 @@ class Tape_UI:
         """Creates the list of Cells (setting the position and default symbol). 
         The default symbol of every cell is 'B'.
         """
+        self.tape_canvas.clear()
+
         for i in range(self.tape.num_cells):
             self.tape_canvas.append(
                 Cell_UI(
@@ -52,8 +56,16 @@ class Tape_UI:
 
         self.center_tape()  # set to its initial position
 
+    def resize(self, min_new_size: int) -> None:
+        self.tape.resize(min_new_size)
+        self.init_tape_canvas()
+
     def update_tape(self):
         """Updates the tape_canvas with respect to tape. """
+        if len(self.tape_canvas) != self.tape.num_cells:
+            self.init_tape_canvas()
+            return
+
         for i in range(self.tape.num_cells):
             if self[i] != self.tape[i]:
                 self[i] = self.tape[i]

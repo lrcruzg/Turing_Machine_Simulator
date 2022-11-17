@@ -1,4 +1,4 @@
-from math import sqrt
+from math import log2
 
 
 class Tape:
@@ -16,11 +16,11 @@ class Tape:
 
     def resize(self, min_new_size: int) -> None:
         """Resizes the tape copying the information.
-        Adjust the size of the tape (if necessary) and the 
+        Doubles de size of the tape (if necessary) and the 
         data is copied from the middle.
         """
         if min_new_size > self.num_cells:
-            n = int(sqrt(min_new_size)) + 1  # find the next power of 2 that fits min_new_size
+            n = int(log2(min_new_size)) + 1
             new_tape = [self.default] * (2 ** n)
             start = (2 ** n) // 2 - self.num_cells // 2
             for i in range(start, start + self.num_cells):

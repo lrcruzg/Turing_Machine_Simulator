@@ -2,6 +2,7 @@ from TuringMachine_UI import TuringMachine_UI
 from TuringMachine import TuringMachine
 import tkinter as tk
 from tkinter import filedialog as fd
+from tkinter import ttk
 
 
 class App:
@@ -29,6 +30,7 @@ class App:
         self.steps_strvar = tk.StringVar(value='')
         self.state_strvar = tk.StringVar(value='')
         self.symbol_strvar = tk.StringVar(value='')
+        self.speed_var = tk.DoubleVar(value=0.5)
 
         self.tm = TuringMachine()
 
@@ -40,7 +42,8 @@ class App:
                         (self.canvas_width, self.canvas_height), 
                         state_strvar=self.state_strvar,
                         symbol_strvar=self.symbol_strvar, 
-                        steps_strvar=self.steps_strvar)
+                        steps_strvar=self.steps_strvar, 
+                        speed_var=self.speed_var)
 
         self.file_name = tk.StringVar(value='../transition_functions/successor_function.txt')
         self.tm_ui.load_function(self.file_name.get())
@@ -78,6 +81,13 @@ class App:
                                  text='Run', 
                                  command=self.tm_ui.run_pause)
 
+        self.speed = ttk.Scale(self.btns_frame, 
+                               orient='horizontal', 
+                               length=150, 
+                               from_=0.1, 
+                               to=1.0, 
+                               variable=self.speed_var)
+
         self.reset_btn = tk.Button(self.btns_frame, 
                                    text='Reset', 
                                    command=self.tm_ui.reset)
@@ -114,10 +124,12 @@ class App:
         self.step_btn.grid(row=3, column=0, pady=9)
         self.run_btn.grid(row=3, column=1, pady=9)
 
-        self.input_entry.grid(row=4, column=0, sticky='e', padx=5)
-        self.load_btn.grid(row=4, column=1, sticky='w', pady=20)
+        self.speed.grid(row=4, columnspan=2)
 
-        self.reset_btn.grid(row=5, columnspan=2)
+        self.input_entry.grid(row=5, column=0, sticky='e', padx=5)
+        self.load_btn.grid(row=5, column=1, sticky='w', pady=20)
+
+        self.reset_btn.grid(row=6, columnspan=2)
 
         self.root.bind('<s>', lambda event: self.tm_ui.step())
         self.root.bind('<r>', lambda event: self.tm_ui.run_pause())

@@ -127,9 +127,9 @@ class TuringMachine:
         """Reset all the parameters of the machine to it's original values. """
         self.tape.reset()  # reset the tape
 
+        self.head_position = self.initial_head_position
         self.current_state = self.initial_state
         self.steps_counter = 0
-        self.head_position = self.initial_head_position
         self.history = []
 
 
@@ -138,8 +138,8 @@ class TuringMachine:
         if not len(tape_input):
             return
         
-        if self.num_cells // 2 < len(tape_input):
-            self.tape.resize(len(tape_input))
+        if self.num_cells // 2 < len(tape_input): # input doesn't fit in the 2nd half
+            self.tape.resize(len(tape_input) * 2) # at leas should fit int the 2nd half
 
         self.reset()
 
